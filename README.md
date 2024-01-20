@@ -2,9 +2,24 @@
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
 [![Maven Central](http://img.shields.io/maven-central/v/io.alapierre.ksef.fa/java-ksef-fa)](https://search.maven.org/artifact/io.alapierre.ksef.fa/java-ksef-fa)
 
-# GOBL o KSeF Java converter
+# GOBL to KSeF Java converter
 
 Early stage of project
+
+## Convert GOBL Invoice into FA(2) 
+
+````java
+InvoiceMapper mapper = Mappers.getMapper(InvoiceMapper.class);
+
+InvoiceSerializer invoiceSerializer = new InvoiceSerializer();
+Invoice invoice = invoiceSerializer.fromFile(new File("src/test/resources/invoice.json"));
+
+Faktura faktura = mapper.invoiceToFaktura(invoice);
+
+FakturaSerializer fakturaSerializer = new FakturaSerializer();
+
+System.out.println(fakturaSerializer.toString(faktura, false));
+````
 
 ## Build Requirements
 

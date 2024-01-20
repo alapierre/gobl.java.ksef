@@ -28,7 +28,7 @@
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <gobl.version>1.0-SNAPSHOT</gobl.version>
-        <ksef.fa.model.version>1.0-SNAPSHOT</ksef.fa.model.version>
+        <ksef.fa.model.version>2.0.0</ksef.fa.model.version>
     </properties>
 
     <build>
