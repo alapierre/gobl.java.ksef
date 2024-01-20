@@ -69,6 +69,17 @@
     "tax": "23.00",
     "total_with_tax": "123.00",
     "payable": "123.00"
+  },
+  "payment": {
+    "instructions": {
+      "key": "credit-transfer",
+      "credit_transfer": [
+        {
+          "number": "61109010140000071219812874",
+          "name": "PKO BP"
+        }
+      ]
+    }
   }
 }
 

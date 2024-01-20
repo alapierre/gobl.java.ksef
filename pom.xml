@@ -31,6 +31,30 @@
         <ksef.fa.model.version>2.0.0</ksef.fa.model.version>
     </properties>
 
+    <name>gobl-java-ksef</name>
+    <description>GOBL to KSeF FA converter</description>
+    <url>https://github.com/alapierre/gobl.java.ksef</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Adrian Lapierre</name>
+            <email>al@alapierre.io</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:alapierre/gobl.java.ksef.git</connection>
+        <developerConnection>scm:git:git@github.com:alapierre/gobl.java.ksef.git</developerConnection>
+        <url>>https://github.com/alapierre/gobl.java.ksef</url>
+    </scm>
+
     <build>
         <plugins>
 
