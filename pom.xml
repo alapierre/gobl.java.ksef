@@ -27,7 +27,7 @@
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-        <gobl.version>1.0-SNAPSHOT</gobl.version>
+        <gobl.version>0.0.2</gobl.version>
         <ksef.fa.model.version>2.0.0</ksef.fa.model.version>
     </properties>
 
@@ -198,9 +198,10 @@
                 <version>5.9.1</version>
                 <scope>test</scope>
             </dependency>
+
             <dependency>
                 <groupId>io.alapierre.gobl</groupId>
-                <artifactId>gobl-model</artifactId>
+                <artifactId>gobl-core</artifactId>
                 <version>${gobl.version}</version>
             </dependency>
 

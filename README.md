@@ -9,15 +9,13 @@ Early stage of project
 ## Convert GOBL Invoice into FA(2) 
 
 ````java
+Gobl gobl = new Gobl();
+Invoice invoice = gobl.parseInvoice(Path.of("src/test/resources/invoice.json"));
 InvoiceMapper mapper = Mappers.getMapper(InvoiceMapper.class);
-
-InvoiceSerializer invoiceSerializer = new InvoiceSerializer();
-Invoice invoice = invoiceSerializer.fromFile(new File("src/test/resources/invoice.json"));
 
 Faktura faktura = mapper.invoiceToFaktura(invoice);
 
 FakturaSerializer fakturaSerializer = new FakturaSerializer();
-
 System.out.println(fakturaSerializer.toString(faktura, false));
 ````
 

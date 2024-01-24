@@ -1,8 +1,6 @@
 package io.alapierre.ksef.fa.converter;
 
-import org.gobl.model.Address;
-import org.gobl.model.Invoice;
-import org.gobl.model.Line;
+import org.gobl.model.*;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,7 +8,9 @@ import org.mapstruct.MappingTarget;
 import pl.gov.crd.wzor._2023._06._29._12648.*;
 import pl.gov.crd.xml.schematy.dziedzinowe.mf._2022._01._05.ed.definicjetypy.TKodKraju;
 
+import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -31,9 +31,27 @@ public interface InvoiceMapper {
     @Mapping(target = "podmiot2.adres", source = "customer.addresses")
     @Mapping(target = "fa.faWiersz", source = "lines")
     @Mapping(target = "fa.p15", source = "totals.payable")
+    @Mapping(target = "fa.platnosc.rachunekBankowy", source = "payment.instructions.creditTransfer")
+    @Mapping(target = "fa.platnosc.formaPlatnosci", source = "payment.instructions")
     Faktura invoiceToFaktura(Invoice invoice);
 
     Invoice fakturaToInvoice(Faktura faktura);
+
+    @Mapping(target = "nazwaBanku", source = "name")
+    @Mapping(target = "nrRB", source = "number")
+    TRachunekBankowy map(CreditTransfer creditTransfer);
+
+    default BigInteger map(Instructions i) {
+        if (!i.getCreditTransfer().isEmpty()) return BigInteger.valueOf(6);
+        else if (i.getCard() != null) return BigInteger.valueOf(2);
+        return BigInteger.valueOf(1); // TODO: if do not kow - than use cache
+    }
+
+    default Optional<Integer> mapFormaPlatnosci(Instructions i) {
+        if (!i.getCreditTransfer().isEmpty()) return Optional.of(6);
+        else if (i.getCard() != null) return Optional.of(2);
+        return Optional.empty();
+    }
 
     default TAdres map(List<Address> value) {
 

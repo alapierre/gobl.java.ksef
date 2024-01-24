@@ -52,7 +52,7 @@
 
         <dependency>
             <groupId>io.alapierre.gobl</groupId>
-            <artifactId>gobl-model</artifactId>
+            <artifactId>gobl-core</artifactId>
         </dependency>
 
         <dependency>
