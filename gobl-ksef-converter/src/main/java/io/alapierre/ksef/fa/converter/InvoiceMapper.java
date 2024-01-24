@@ -8,7 +8,11 @@ import org.mapstruct.MappingTarget;
 import pl.gov.crd.wzor._2023._06._29._12648.*;
 import pl.gov.crd.xml.schematy.dziedzinowe.mf._2022._01._05.ed.definicjetypy.TKodKraju;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +35,7 @@ public interface InvoiceMapper {
     @Mapping(target = "podmiot2.adres", source = "customer.addresses")
     @Mapping(target = "fa.faWiersz", source = "lines")
     @Mapping(target = "fa.p15", source = "totals.payable")
+    @Mapping(target = "fa.p141", source = "totals.taxes")
     @Mapping(target = "fa.platnosc.rachunekBankowy", source = "payment.instructions.creditTransfer")
     @Mapping(target = "fa.platnosc.formaPlatnosci", source = "payment.instructions")
     Faktura invoiceToFaktura(Invoice invoice);
@@ -40,6 +45,10 @@ public interface InvoiceMapper {
     @Mapping(target = "nazwaBanku", source = "name")
     @Mapping(target = "nrRB", source = "number")
     TRachunekBankowy map(CreditTransfer creditTransfer);
+
+    default BigDecimal map(Total total) {
+        return new BigDecimal(total.getSum());
+    }
 
     default BigInteger map(Instructions i) {
         if (!i.getCreditTransfer().isEmpty()) return BigInteger.valueOf(6);
@@ -95,6 +104,10 @@ public interface InvoiceMapper {
 
         naglowek.setKodFormularza(kodFormularza);
         naglowek.setWariantFormularza((byte) 2);
+        try {
+            naglowek.setDataWytworzeniaFa( DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
+        } catch (DatatypeConfigurationException ignore) {}
+        naglowek.setSystemInfo("GOBL Java FA(2) Converter");
 
         faktura.setNaglowek(naglowek);
         determinateInvoiceType(invoice, faktura);
@@ -115,6 +128,11 @@ public interface InvoiceMapper {
     }
 
     private static void determinateAdnotacja(Invoice invoice, Faktura faktura) {
+
+        adnotacje(faktura).setP16((byte) 2);
+        adnotacje(faktura).setP17((byte) 2);
+        adnotacje(faktura).setP18A((byte) 2);
+        adnotacje(faktura).setP23((byte) 2);
 
         if (invoice.getTax() == null) {
             adnotacje(faktura).setP18((byte) 2);

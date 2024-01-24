@@ -15,7 +15,8 @@
         "num": "109",
         "street": "Warszawska",
         "locality": "Łomianki",
-        "code": "05-092"
+        "code": "05-092",
+        "country": "PL"
       }
     ]
   },

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JsonSchemaMappingsProjectConfiguration">
+    <state>
+      <map>
+        <entry key="GOBL Invoice">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="GOBL Invoice" />
+              <option name="relativePathToSchema" value="../gobl.java/gobl-model/src/main/resources/jsonschema/invoice.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="gobl-ksef-converter/src/test/resources/invoice.json" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+      </map>
+    </state>
+  </component>
+</project>
