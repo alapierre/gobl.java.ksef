@@ -13,6 +13,9 @@ Early stage of project, byt for simple case sales invoice it can create valid FA
 - conversion of the invoice type was not consulted with a tax advisors (and still, only standard VAT invoice is supported)
 - only payment by bank transfer and card is now supported
 
+Sample input: [gobl-ksef-converter/src/test/resources/invoice.json](./gobl-ksef-converter/src/test/resources/invoice.json)
+
+
 ## Convert GOBL Invoice into FA(2) 
 
 ````java
