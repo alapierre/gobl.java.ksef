@@ -10,11 +10,13 @@ import pl.gov.crd.xml.schematy.dziedzinowe.mf._2022._01._05.ed.definicjetypy.TKo
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -38,13 +40,25 @@ public interface InvoiceMapper {
     @Mapping(target = "fa.p141", source = "totals.taxes")
     @Mapping(target = "fa.platnosc.rachunekBankowy", source = "payment.instructions.creditTransfer")
     @Mapping(target = "fa.platnosc.formaPlatnosci", source = "payment.instructions")
+    @Mapping(target = "fa.platnosc.terminPlatnosci", source = "payment.terms.dueDates")
     Faktura invoiceToFaktura(Invoice invoice);
 
-    Invoice fakturaToInvoice(Faktura faktura);
+    //Invoice fakturaToInvoice(Faktura faktura); // currently bidirectional conversion will not work
 
     @Mapping(target = "nazwaBanku", source = "name")
     @Mapping(target = "nrRB", source = "number")
     TRachunekBankowy map(CreditTransfer creditTransfer);
+
+    default List<Faktura.Fa.Platnosc.TerminPlatnosci> mapDueDate(List<DueDate> value) {
+        return value.stream()
+                .map(dueDate -> {
+                    Faktura.Fa.Platnosc.TerminPlatnosci terminPlatnosci = new Faktura.Fa.Platnosc.TerminPlatnosci();
+                    terminPlatnosci.setTermin(convertDate(dueDate.getDate()));
+                    terminPlatnosci.setTerminOpis("kwota: " + dueDate.getAmount());
+                    return terminPlatnosci;
+                })
+                .collect(Collectors.toList());
+    }
 
     default BigDecimal map(Total total) {
         return new BigDecimal(total.getSum());
@@ -62,7 +76,7 @@ public interface InvoiceMapper {
         return Optional.empty();
     }
 
-    default TAdres map(List<Address> value) {
+    default TAdres mapAdres(List<Address> value) {
 
         if(value.isEmpty()) return null;
 
@@ -83,15 +97,22 @@ public interface InvoiceMapper {
     @Mapping(target = "p8B", source = "quantity")
     @Mapping(target = "p9A", source = "item.price")
     @Mapping(target = "p11", source = "sum")
-    @Mapping(target = "p12", source = "sum")
+    @Mapping(target = "p12", source = "taxes")
     Faktura.Fa.FaWiersz pozycje(Line line);
 
-
-    @AfterMapping
-    default void handleVatRate(Line line, @MappingTarget Faktura.Fa.FaWiersz faWiersz) {
-        line.getTaxes().stream().filter(tax -> "VAT".equals(tax.getCat()))
-                .findFirst().ifPresent(combo -> faWiersz.setP12(combo.getPercent().replace("%", "")));
+    default String map(List<Combo> taxes) {
+        return taxes.stream()
+                .filter(combo -> "VAT".equals(combo.getCat()))
+                .findFirst()
+                .map(combo -> combo.getPercent() != null ? combo.getPercent().replace(".0%", "") : null)
+                .orElse(null);
     }
+
+//    @AfterMapping
+//    default void handleVatRate(Line line, @MappingTarget Faktura.Fa.FaWiersz faWiersz) {
+//        line.getTaxes().stream().filter(tax -> "VAT".equals(tax.getCat()))
+//                .findFirst().ifPresent(combo -> faWiersz.setP12(combo.getPercent().replace(".0%", "")));
+//    }
 
     @AfterMapping
     default void fillHeader(Invoice invoice, @MappingTarget Faktura faktura) {
@@ -111,7 +132,7 @@ public interface InvoiceMapper {
 
         faktura.setNaglowek(naglowek);
         determinateInvoiceType(invoice, faktura);
-        determinateAdnotacja(invoice, faktura);
+        determinateAdnotacje(invoice, faktura);
     }
 
     private static void determinateInvoiceType(Invoice invoice, Faktura faktura) {
@@ -127,15 +148,26 @@ public interface InvoiceMapper {
         faktura.getFa().setRodzajFaktury(typ);
     }
 
-    private static void determinateAdnotacja(Invoice invoice, Faktura faktura) {
+    private static void determinateAdnotacje(Invoice invoice, Faktura faktura) {
 
-        adnotacje(faktura).setP16((byte) 2);
-        adnotacje(faktura).setP17((byte) 2);
-        adnotacje(faktura).setP18A((byte) 2);
-        adnotacje(faktura).setP23((byte) 2);
+        Faktura.Fa.Adnotacje adn = adnotacje(faktura);
+        adn.setP16((byte) 2);
+        adn.setP17((byte) 2);
+        adn.setP18A((byte) 2);
+        adn.setP23((byte) 2);
+        Faktura.Fa.Adnotacje.Zwolnienie zwolnienie = new Faktura.Fa.Adnotacje.Zwolnienie();
+        zwolnienie.setP19N((byte) 1);
+        adn.setZwolnienie(zwolnienie);
+        Faktura.Fa.Adnotacje.NoweSrodkiTransportu noweSrodkiTransportu = new Faktura.Fa.Adnotacje.NoweSrodkiTransportu();
+        noweSrodkiTransportu.setP22N((byte) 1);
+        adn.setNoweSrodkiTransportu(noweSrodkiTransportu);
+
+        Faktura.Fa.Adnotacje.PMarzy pmarzy = new Faktura.Fa.Adnotacje.PMarzy();
+        pmarzy.setPPMarzyN((byte) 1);
+        adn.setPMarzy(pmarzy);
 
         if (invoice.getTax() == null) {
-            adnotacje(faktura).setP18((byte) 2);
+            adn.setP18((byte) 2);
             return;
         }
 
@@ -151,7 +183,14 @@ public interface InvoiceMapper {
         Faktura.Fa.Adnotacje a = new Faktura.Fa.Adnotacje();
         faktura.getFa().setAdnotacje(a);
         return a;
+    }
 
+    private static XMLGregorianCalendar convertDate(String date) {
+        try {
+            return DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
+        } catch (DatatypeConfigurationException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
 }

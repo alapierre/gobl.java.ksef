@@ -4,7 +4,14 @@
 
 # GOBL to KSeF Java converter
 
-Early stage of project
+Early stage of project, byt for simple case sales invoice it can create valid FA(2) from Json. 
+
+## Current project stage limitation
+
+- almost all annotations (except `P_18`) are hardcoded in converter
+- only sales invoices are supported
+- conversion of the invoice type was not consulted with a tax advisors (and still, only standard VAT invoice is supported)
+- only payment by bank transfer and card is now supported
 
 ## Convert GOBL Invoice into FA(2) 
 

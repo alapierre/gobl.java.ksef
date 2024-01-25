@@ -72,6 +72,14 @@
     "payable": "123.00"
   },
   "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2024-01-24",
+          "amount": 123.00
+        }
+      ]
+    },
     "instructions": {
       "key": "credit-transfer",
       "credit_transfer": [

@@ -28,7 +28,7 @@ class InvoiceMapperTest {
         Faktura faktura = mapper.invoiceToFaktura(invoice);
 
         FakturaSerializer fakturaSerializer = new FakturaSerializer();
-        System.out.println(fakturaSerializer.toString(faktura, false));
+        System.out.println(fakturaSerializer.toString(faktura, true));
 
         Assertions.assertEquals("VAT", faktura.getFa().getRodzajFaktury().value());
         Assertions.assertEquals("2024-01-15", faktura.getFa().getP1().toString());
@@ -40,7 +40,6 @@ class InvoiceMapperTest {
         Assertions.assertEquals(1, faktura.getFa().getPlatnosc().getRachunekBankowy().size());
         Assertions.assertEquals("PKO BP", faktura.getFa().getPlatnosc().getRachunekBankowy().get(0).getNazwaBanku());
         Assertions.assertEquals("61109010140000071219812874", faktura.getFa().getPlatnosc().getRachunekBankowy().get(0).getNrRB());
-
 
     }
 
