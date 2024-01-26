@@ -16,7 +16,6 @@ import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -57,7 +56,7 @@ public interface InvoiceMapper {
                     terminPlatnosci.setTerminOpis("kwota: " + dueDate.getAmount());
                     return terminPlatnosci;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     default BigDecimal map(Total total) {
